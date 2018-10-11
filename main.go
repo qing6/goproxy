@@ -74,7 +74,12 @@ func mainHandler(inner http.Handler) http.Handler {
 }
 
 func goGet(path, version, suffix string, w http.ResponseWriter, r *http.Request) error {
-	cmd := exec.Command("go", "get", "-d", path+"@"+version)
+	var cmd *exec.Cmd
+	if strings.HasPrefix(path, "gitlab.ezrpro.in") {
+		cmd = exec.Command("go", "get", "-d", "-insecure", path+"@"+version)
+	} else {
+		cmd = exec.Command("go", "get", "-d", path+"@"+version)
+	}
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		return err
